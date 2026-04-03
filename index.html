@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="比價達人">
+  <meta name="description" content="記錄商品在不同賣場的價格，追蹤最低價，聰明購物不吃虧">
+  <meta name="theme-color" content="#007AFF">
+  <title>比價達人</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div id="app">
+  <div id="header"></div>
+  <main id="content"></main>
+
+  <nav id="tab-bar">
+    <button class="tab-btn active" data-tab="home" id="tab-home">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">首頁</span>
+    </button>
+    <button class="tab-btn" data-tab="products" id="tab-products">
+      <span class="tab-icon">📦</span>
+      <span class="tab-label">商品</span>
+    </button>
+    <button class="tab-btn" data-tab="stores" id="tab-stores">
+      <span class="tab-icon">🏪</span>
+      <span class="tab-label">賣場</span>
+    </button>
+    <button class="tab-btn" data-tab="settings" id="tab-settings">
+      <span class="tab-icon">⚙️</span>
+      <span class="tab-label">設定</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Bottom Sheet Modal -->
+<div id="modal-backdrop" class="modal-backdrop hidden"></div>
+<div id="modal-sheet" class="modal-sheet hidden"></div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="js/db.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
