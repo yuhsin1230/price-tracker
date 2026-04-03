@@ -665,7 +665,7 @@ function renderSettings() {
       <div class="settings-section-title">關於</div>
       <div class="list-group">
         <div class="list-item" style="cursor:default">
-          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">1.1.0</div></div>
+          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">1.1.1</div></div>
         </div>
         <div class="list-item" style="cursor:default">
           <div class="list-item-body"><div class="list-item-title">儲存方式</div><div class="list-item-sub">本地 IndexedDB（完全離線）</div></div>
