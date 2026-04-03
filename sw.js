@@ -1,11 +1,23 @@
-const CACHE_NAME = 'price-tracker-v2.0.0';
+const CACHE_NAME = 'price-tracker-v2.0.1';
 const ASSETS = [
   './', './index.html', './css/app.css',
   './js/db.js', './js/analysis.js', './js/app.js', './manifest.json'
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(c => {
+      return Promise.all(
+        ASSETS.map(url => {
+          const req = new Request(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`, { cache: 'no-store' });
+          return fetch(req).then(res => {
+            if (!res.ok) throw new Error('Fetch failed for ' + url);
+            return c.put(url, res.clone());
+          });
+        })
+      );
+    })
+  );
   self.skipWaiting();
 });
 
