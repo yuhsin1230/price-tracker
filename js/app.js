@@ -67,6 +67,7 @@ function render() {
     case 'product-detail': renderDetail(S.productId); break;
     case 'stores':         renderStores(); break;
     case 'settings':       renderSettings(); break;
+    case 'help':           renderHelp(); break;
   }
 }
 
@@ -433,6 +434,70 @@ function renderSettings() {
         </div>
       </div>
     </div>`;
+}
+
+// ═══════════════════════════════════════════
+// HELP / TUTORIAL
+// ═══════════════════════════════════════════
+function renderHelp() {
+  setHeader(`<div class="header-inner"><h1 class="header-title">使用教學</h1></div>`);
+
+  $('content').innerHTML = `
+    <div style="padding: 16px 20px;">
+      <p style="color: var(--txt2); font-size: 0.9rem; line-height: 1.5; margin-bottom: 24px;">
+        歡迎使用比價達人！只需簡單幾個步驟，就能輕鬆開始追蹤與比較商品的價格，聰明購物不吃虧。
+      </p>
+
+      <div class="analysis-card" style="margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div style="background: var(--blue); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">1</div>
+          <h3 style="margin: 0; font-size: 1.05rem;">新增你要追蹤的商品</h3>
+        </div>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
+          切換到「依商品」頁籤（下方第二個按鈕），點擊右上角的 <strong>+</strong> 號。輸入商品名稱（如：衛生紙）、單位（如：包或抽），即可建立追蹤清單。
+        </p>
+      </div>
+
+      <div class="analysis-card" style="margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div style="background: var(--orange); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">2</div>
+          <h3 style="margin: 0; font-size: 1.05rem;">建立你的常去賣場</h3>
+        </div>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
+          切換到「依賣場」頁籤（下方第三個按鈕），把常去的超市、量販店或網購平台（如：全聯、好市多、momo）建立起來。
+        </p>
+      </div>
+
+      <div class="analysis-card" style="margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div style="background: var(--green); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">3</div>
+          <h3 style="margin: 0; font-size: 1.05rem;">隨時記錄最新價格</h3>
+        </div>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
+          在「首頁」點擊右上角的 <strong>+</strong> 號，選擇對應的商品與賣場，輸入售價及包裝規格（如：120抽）。系統會自動幫您換算最準確的<strong>「單位價格」</strong>！
+        </p>
+      </div>
+
+      <div class="analysis-card" style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div style="background: var(--purple); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">4</div>
+          <h3 style="margin: 0; font-size: 1.05rem;">自動分析與購買建議</h3>
+        </div>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
+          回到首頁，系統會根據你的歷史紀錄，用顏色和百分比告訴你現在的價格是<strong>「歷史低價（值得買）」</strong>還是<strong>「歷史高價（再等等）」</strong>。
+        </p>
+      </div>
+
+      <div class="analysis-card" style="background: rgba(0, 122, 255, 0.05); border: 1px solid rgba(0, 122, 255, 0.1);">
+        <h3 style="margin: 0 0 10px 0; font-size: 1rem; color: var(--blue);">💡 小撇步：將 App 加入主畫面</h3>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-bottom: 0;">
+          如果您使用的是 iPhone Safari，可以點擊瀏覽器下方的<strong>「分享按鈕（方塊向上箭頭）」</strong>，然後選擇<strong>「加入主畫面」</strong>。這樣就能像一般 App 一樣全螢幕使用，而且支援離線開啟！
+        </p>
+      </div>
+      
+      <div style="height: 30px;"></div>
+    </div>
+  `;
 }
 
 // ═══════════════════════════════════════════
