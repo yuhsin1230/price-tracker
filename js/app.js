@@ -686,7 +686,7 @@ function renderSettings() {
           </div>
         </div>
         <div class="list-item" style="cursor:default">
-          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">1.1.2</div></div>
+          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">2.0.0</div></div>
         </div>
         <div class="list-item" style="cursor:default">
           <div class="list-item-body"><div class="list-item-title">儲存方式</div><div class="list-item-sub">本地 IndexedDB（完全離線）</div></div>
@@ -854,7 +854,7 @@ function showProductModal(id = null) {
         </div>
         <div class="form-group"><label class="form-label">計量單位 *</label>
           <select class="form-input form-select" name="unitType" required>
-            ${['ml','L','g','kg','count','片','包','盒','瓶','罐'].map(u=>`<option value="${u}" ${p?.unitType===u?'selected':''}>${u}</option>`).join('')}
+            ${['ml','L','g','kg','片','包','盒','瓶'].map(u=>`<option value="${u}" ${p?.unitType===u?'selected':''}>${u}</option>`).join('')}
           </select>
         </div>
         <div class="form-group"><label class="form-label">條碼（選填）</label><input class="form-input" name="barcode" placeholder="掃描或手動輸入" value="${esc(p?.barcode||'')}"></div>
