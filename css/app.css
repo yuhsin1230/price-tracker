@@ -309,3 +309,32 @@ body {
 .tag { display:inline-flex; align-items:center; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; background:var(--bg3); color:var(--txt3); }
 .tag-promo { background:rgba(255,149,0,.12); color:var(--orange); }
 .tag-accent { background:var(--accent-bg); color:var(--accent); }
+
+/* ── Backup ── */
+.backup-desc {
+  font-size:.82rem; color:var(--txt3); line-height:1.5;
+  padding:0 4px 12px;
+}
+.backup-btns {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+.backup-btn {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px; border:none; border-radius:var(--r-md);
+  cursor:pointer; font-size:.88rem; font-weight:600;
+  text-align:left; transition:transform .15s, box-shadow .15s, opacity .15s;
+  box-shadow:var(--shadow);
+}
+.backup-btn:active { transform:scale(.96); opacity:.88; }
+.backup-btn-icon { font-size:1.4rem; flex-shrink:0; line-height:1; }
+.backup-btn-title { display:block; font-size:.88rem; font-weight:700; }
+.backup-btn-sub   { display:block; font-size:.72rem; font-weight:400; margin-top:2px; opacity:.75; }
+
+.backup-btn-export {
+  background:linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  color:#fff;
+}
+.backup-btn-import {
+  background:linear-gradient(135deg, #34C759 0%, #30B0C7 100%);
+  color:#fff;
+}

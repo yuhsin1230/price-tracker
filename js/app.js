@@ -412,6 +412,27 @@ function renderSettings() {
 
   $('content').innerHTML = `
     <div class="settings-section">
+      <div class="settings-section-title">資料備份</div>
+      <div class="backup-desc">匯出 JSON 可在換機或清除瀏覽器資料後，透過匯入還原所有歷史紀錄。</div>
+      <div class="backup-btns">
+        <button class="backup-btn backup-btn-export" data-action="export-data">
+          <span class="backup-btn-icon">⬆️</span>
+          <span>
+            <span class="backup-btn-title">匯出 JSON</span>
+            <span class="backup-btn-sub">下載備份檔案</span>
+          </span>
+        </button>
+        <button class="backup-btn backup-btn-import" data-action="import-data">
+          <span class="backup-btn-icon">⬇️</span>
+          <span>
+            <span class="backup-btn-title">匯入 JSON</span>
+            <span class="backup-btn-sub">從備份檔案還原</span>
+          </span>
+        </button>
+      </div>
+      <input type="file" id="import-file-input" accept=".json,application/json" style="display:none">
+    </div>
+    <div class="settings-section">
       <div class="settings-section-title" style="display:flex;justify-content:space-between;align-items:center;">
         <span>已刪除商品</span>
         ${archProds.length ? `<button class="btn-ghost btn-danger" style="margin:0;padding:0;font-size:.72rem" data-action="hard-delete-all-products">清空全部</button>` : ''}
@@ -427,13 +448,36 @@ function renderSettings() {
       <div class="settings-section-title">關於</div>
       <div class="list-group">
         <div class="list-item" style="cursor:default">
-          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">1.0.0 MVP</div></div>
+          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">1.1.0</div></div>
         </div>
         <div class="list-item" style="cursor:default">
           <div class="list-item-body"><div class="list-item-title">儲存方式</div><div class="list-item-sub">本地 IndexedDB（完全離線）</div></div>
         </div>
       </div>
     </div>`;
+
+  // Bind import file input after render
+  const importInput = document.getElementById('import-file-input');
+  if (importInput) {
+    importInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      importInput.value = '';
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if (!data.products || !data.stores || !data.priceRecords) throw new Error('格式錯誤');
+        const ok = await customConfirm(`確定要匯入備份嗎？\n現有的 ${S.cache.products.length} 項商品、${S.cache.stores.length} 個賣場、${S.cache.priceRecords.length} 筆紀錄將全部被覆蓋，此動作無法還原。`);
+        if (!ok) return;
+        await db.importAll(data);
+        await reload();
+        toast(`匯入成功！共 ${data.products.length} 項商品、${data.priceRecords.length} 筆紀錄`);
+        setTimeout(render, 400);
+      } catch (err) {
+        toast('匯入失敗：' + (err.message || '檔案格式不正確'), 'error');
+      }
+    });
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -785,6 +829,34 @@ async function hardDeleteAllStores() {
 }
 
 // ═══════════════════════════════════════════
+// BACKUP: Export / Import
+// ═══════════════════════════════════════════
+async function exportData() {
+  try {
+    const data = await db.exportAll();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const date = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `比價達人備份_${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast(`匯出成功！共 ${data.products.length} 項商品、${data.priceRecords.length} 筆紀錄`);
+  } catch (err) {
+    toast('匯出失敗：' + err.message, 'error');
+  }
+}
+
+function importData() {
+  const input = document.getElementById('import-file-input');
+  if (input) input.click();
+}
+
+// ═══════════════════════════════════════════
 // Event delegation
 // ═══════════════════════════════════════════
 document.addEventListener('click', e => {
@@ -813,6 +885,8 @@ document.addEventListener('click', e => {
     case 'hard-delete-store':        hardDeleteStore(id); break;
     case 'hard-delete-all-products': hardDeleteAllProducts(); break;
     case 'hard-delete-all-stores':   hardDeleteAllStores(); break;
+    case 'export-data':              exportData(); break;
+    case 'import-data':              importData(); break;
   }
 });
 

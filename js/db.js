@@ -71,5 +71,30 @@ class PriceTrackerDB {
       req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error);
     });
   }
+
+  async exportAll() {
+    const [products, stores, priceRecords] = await Promise.all([
+      this.getAll('products'), this.getAll('stores'), this.getAll('priceRecords')
+    ]);
+    return {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      products, stores, priceRecords
+    };
+  }
+
+  async importAll(data) {
+    const stores = ['products', 'stores', 'priceRecords'];
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(stores, 'readwrite');
+      tx.onerror = () => reject(tx.error);
+      tx.oncomplete = () => resolve(true);
+      for (const name of stores) {
+        const os = tx.objectStore(name);
+        os.clear();
+        for (const item of (data[name] || [])) os.put(item);
+      }
+    });
+  }
 }
 window.db = new PriceTrackerDB();
