@@ -1,4 +1,6 @@
 'use strict';
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
 
 // ═══════════════════════════════════════════
 // State
@@ -662,6 +664,18 @@ function renderSettings() {
       </div>${storeHTML}
     </div>
     <div class="settings-section">
+      <div class="settings-section-title">外觀</div>
+      <div class="list-group">
+        <div class="list-item" style="cursor:pointer" data-action="toggle-theme">
+          <div class="list-item-icon" style="background:var(--bg3);color:var(--txt)">\${document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️'}</div>
+          <div class="list-item-body">
+            <div class="list-item-title">切換深色/淺色模式</div>
+            <div class="list-item-sub">目前：\${document.documentElement.getAttribute('data-theme') === 'dark' ? '深色' : '淺色'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
       <div class="settings-section-title">關於</div>
       <div class="list-group">
         <div class="list-item" style="cursor:pointer" data-action="force-update">
@@ -1116,6 +1130,14 @@ async function forceUpdate() {
   setTimeout(() => window.location.reload(true), 1200);
 }
 
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  if (S.view === 'settings') render();
+}
+
 // ═══════════════════════════════════════════
 // Event delegation
 // ═══════════════════════════════════════════
@@ -1148,6 +1170,7 @@ document.addEventListener('click', e => {
     case 'export-data':              exportData(); break;
     case 'import-data':              importData(); break;
     case 'force-update':             forceUpdate(); break;
+    case 'toggle-theme':             toggleTheme(); break;
   }
 });
 
