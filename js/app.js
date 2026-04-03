@@ -664,6 +664,12 @@ function renderSettings() {
     <div class="settings-section">
       <div class="settings-section-title">關於</div>
       <div class="list-group">
+        <div class="list-item" style="cursor:pointer" data-action="force-update">
+          <div class="list-item-body">
+            <div class="list-item-title" style="color:var(--accent)">🔄 檢查並更新最新版本</div>
+            <div class="list-item-sub">清除快取並強制從網路抓取最新版</div>
+          </div>
+        </div>
         <div class="list-item" style="cursor:default">
           <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">1.1.1</div></div>
         </div>
@@ -1093,6 +1099,23 @@ function importData() {
   if (input) input.click();
 }
 
+async function forceUpdate() {
+  const ok = await customConfirm('確定要清除快取並檢查最新版本嗎？');
+  if (!ok) return;
+  if ('serviceWorker' in navigator) {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const reg of registrations) await reg.unregister();
+    } catch(e) {}
+  }
+  try {
+    const names = await caches.keys();
+    for (const name of names) await caches.delete(name);
+  } catch(e) {}
+  toast('正在重新載入最新版本...');
+  setTimeout(() => window.location.reload(true), 1200);
+}
+
 // ═══════════════════════════════════════════
 // Event delegation
 // ═══════════════════════════════════════════
@@ -1124,6 +1147,7 @@ document.addEventListener('click', e => {
     case 'hard-delete-all-stores':   hardDeleteAllStores(); break;
     case 'export-data':              exportData(); break;
     case 'import-data':              importData(); break;
+    case 'force-update':             forceUpdate(); break;
   }
 });
 
