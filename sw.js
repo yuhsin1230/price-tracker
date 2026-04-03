@@ -1,4 +1,4 @@
-const CACHE_NAME = 'price-tracker-v15';
+const CACHE_NAME = 'price-tracker-v16';
 const ASSETS = [
   './', './index.html', './css/app.css',
   './js/db.js', './js/analysis.js', './js/app.js', './manifest.json'
