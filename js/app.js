@@ -450,7 +450,8 @@ function renderTrendChart(recs, p, analysis) {
   const style = getComputedStyle(document.documentElement);
   const txtColor  = style.getPropertyValue('--txt2').trim() || '#3C3C43';
   const sepColor  = style.getPropertyValue('--sep').trim() || 'rgba(60,60,67,.12)';
-  const accentColor = '#007AFF';
+  const accentColor = style.getPropertyValue('--accent').trim() || '#667EEA';
+  const accentBgColor = style.getPropertyValue('--accent-bg').trim() || 'rgba(102,126,234,0.15)';
 
   // 銷毀舊圖（切換商品時）
   if (canvas._chartInstance) { canvas._chartInstance.destroy(); }
@@ -460,7 +461,7 @@ function renderTrendChart(recs, p, analysis) {
       label: `單位價格 (/${p.unitType})`,
       data: unitPrices,
       borderColor: accentColor,
-      backgroundColor: 'rgba(0,122,255,0.08)',
+      backgroundColor: accentBgColor,
       borderWidth: 2,
       fill: true,
       tension: 0.35,

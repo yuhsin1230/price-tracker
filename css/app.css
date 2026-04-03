@@ -1,36 +1,50 @@
 :root {
-  --bg: #F2F2F7; --bg2: #FFFFFF; --bg3: #E5E5EA;
-  --txt: #1C1C1E; --txt2: #3C3C43; --txt3: #8E8E93;
-  --sep: rgba(60,60,67,.12);
-  --accent: #007AFF; --accent-bg: rgba(0,122,255,.1);
-  --green: #34C759; --yellow: #FFCC00; --orange: #FF9500; --red: #FF3B30;
-  --r-sm: 10px; --r-md: 14px; --r-lg: 20px;
-  --shadow: 0 2px 12px rgba(0,0,0,.07);
+  --bg: #E8EDF2;
+  --bg-gradient: linear-gradient(135deg, #e0eaf5 0%, #f4effa 100%);
+  --bg2: rgba(255, 255, 255, 0.65);
+  --bg3: rgba(255, 255, 255, 0.4);
+  --txt: #1A202C; --txt2: #2D3748; --txt3: #718096;
+  --sep: rgba(255, 255, 255, 0.6);
+  --accent: #667EEA;
+  --accent-g: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  --accent-bg: rgba(102, 126, 234, 0.15);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.7);
+  --green: #10B981; --yellow: #F59E0B; --orange: #F97316; --red: #EF4444;
+  --r-sm: 12px; --r-md: 18px; --r-lg: 24px;
+  --shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
   --tab-h: 83px;
   --header-h: 52px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bot: env(safe-area-inset-bottom, 0px);
-  --header-bg: rgba(242,242,247,.88);
-  --tab-bg: rgba(242,242,247,.92);
+  --header-bg: rgba(255, 255, 255, 0.5);
+  --tab-bg: rgba(255, 255, 255, 0.6);
+  --blur: blur(20px);
 }
 
 [data-theme="dark"] {
-  --bg: #000000; --bg2: #1C1C1E; --bg3: #2C2C2E;
-  --txt: #FFFFFF; --txt2: #EBEBF5; --txt3: #8E8E93;
-  --sep: rgba(84,84,88,.65);
-  --accent: #0A84FF; --accent-bg: rgba(10,132,255,.15);
-  --green: #32D74B; --yellow: #FFD60A; --orange: #FF9F0A; --red: #FF453A;
-  --shadow: 0 2px 12px rgba(0,0,0,.3);
-  --header-bg: rgba(0,0,0,.88);
-  --tab-bg: rgba(0,0,0,.92);
+  --bg: #0F172A;
+  --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+  --bg2: rgba(30, 41, 59, 0.6);
+  --bg3: rgba(51, 65, 85, 0.5);
+  --txt: #F8FAFC; --txt2: #E2E8F0; --txt3: #94A3B8;
+  --sep: rgba(255, 255, 255, 0.08);
+  --accent: #818CF8;
+  --accent-g: linear-gradient(135deg, #818CF8 0%, #C084FC 100%);
+  --accent-bg: rgba(129, 140, 248, 0.2);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+  --green: #34D399; --yellow: #FCD34D; --orange: #FB923C; --red: #F87171;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --header-bg: rgba(15, 23, 42, 0.5);
+  --tab-bg: rgba(15, 23, 42, 0.6);
 }
 
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html { font-size: 16px; }
 body {
-  font-family: -apple-system, 'SF Pro Display', 'Inter', BlinkMacSystemFont, sans-serif;
-  background: var(--bg); color: var(--txt); overscroll-behavior: none;
+  font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); background-image: var(--bg-gradient); background-attachment: fixed;
+  color: var(--txt); overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -39,9 +53,9 @@ body {
 /* ── Header ── */
 #header {
   background: var(--header-bg);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid var(--sep);
+  backdrop-filter: saturate(180%) var(--blur);
+  -webkit-backdrop-filter: saturate(180%) var(--blur);
+  border-bottom: var(--glass-border);
   padding-top: var(--safe-top);
   position: sticky; top:0; z-index:50;
   flex-shrink: 0;
@@ -63,9 +77,9 @@ body {
   height: calc(var(--tab-h) + var(--safe-bot));
   padding-bottom: var(--safe-bot);
   background: var(--tab-bg);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 1px solid var(--sep);
+  backdrop-filter: saturate(180%) var(--blur);
+  -webkit-backdrop-filter: saturate(180%) var(--blur);
+  border-top: var(--glass-border);
   display: flex; flex-shrink:0;
 }
 .tab-btn {
@@ -88,11 +102,12 @@ body {
 .btn-icon:active { transform:scale(.9); }
 
 .btn-primary {
-  background:var(--accent); color:#fff; border:none; border-radius:var(--r-md);
+  background:var(--accent-g); color:#fff; border:none; border-radius:var(--r-md);
   padding:13px 24px; font-size:.95rem; font-weight:600; cursor:pointer; width:100%;
-  transition: opacity .15s, transform .15s;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: box-shadow .2s, transform .2s;
 }
-.btn-primary:active { opacity:.8; transform:scale(.98); }
+.btn-primary:active { box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3); transform:scale(.96); }
 
 .btn-ghost {
   background:none; border:none; color:var(--accent); font-size:.9rem; font-weight:500;
@@ -109,24 +124,25 @@ body {
 .fab {
   position:fixed; bottom:calc(var(--tab-h) + var(--safe-bot) + 16px); right:20px;
   width:54px; height:54px; border-radius:50%;
-  background:var(--accent); color:#fff; border:none; cursor:pointer;
+  background:var(--accent-g); color:#fff; border:none; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 16px rgba(0,122,255,.4); z-index:40;
+  box-shadow:0 6px 20px rgba(102, 126, 234, 0.45); z-index:40;
   transition: transform .2s, box-shadow .2s;
 }
-.fab:active { transform:scale(.92); box-shadow:0 2px 8px rgba(0,122,255,.3); }
+.fab:active { transform:scale(.92); box-shadow:0 3px 10px rgba(102, 126, 234, 0.3); }
 
 /* ── Cards ── */
-.card { background:var(--bg2); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden; }
+.card { background:var(--bg2); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: var(--glass-border); }
 .card-list { display:flex; flex-direction:column; gap:12px; padding:16px; }
 
 /* ── Product Card ── */
 .product-card {
   background:var(--bg2); border-radius:var(--r-lg); padding:14px 16px;
-  box-shadow:var(--shadow); cursor:pointer; transition: transform .15s, box-shadow .15s;
-  -webkit-user-select:none;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: var(--glass-border);
+  box-shadow:var(--shadow); cursor:pointer; transition: transform .2s, box-shadow .2s;
+  -webkit-user-select:none; user-select:none;
 }
-.product-card:active { transform:scale(.98); box-shadow:0 1px 6px rgba(0,0,0,.06); }
+.product-card:active { transform:scale(.96); box-shadow: 0 2px 10px rgba(0,0,0,.03); }
 .product-card-main { display:flex; align-items:center; gap:12px; }
 .product-card-info { flex:1; min-width:0; }
 .product-name { font-size:.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -176,7 +192,7 @@ body {
 /* ── List Items ── */
 .list-section { padding:0 16px 12px; }
 .list-section-title { font-size:.72rem; font-weight:600; color:var(--txt3); text-transform:uppercase; letter-spacing:.5px; padding:16px 4px 6px; }
-.list-group { background:var(--bg2); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden; }
+.list-group { background:var(--bg2); border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: var(--glass-border); }
 .list-item {
   display:flex; align-items:center; padding:14px 16px; cursor:pointer;
   border-bottom:1px solid var(--sep); gap:12px; transition:background .1s;
@@ -192,7 +208,7 @@ body {
 
 /* ── Product Detail ── */
 .detail-wrap { padding:16px; display:flex; flex-direction:column; gap:14px; }
-.analysis-card { background:var(--bg2); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:18px; }
+.analysis-card { background:var(--bg2); border-radius:var(--r-lg); box-shadow:var(--shadow); padding:18px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: var(--glass-border); }
 .analysis-card-title { font-size:.75rem; font-weight:600; color:var(--txt3); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; }
 .analysis-hero { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .analysis-main-price { font-size:1.6rem; font-weight:700; letter-spacing:-.5px; }
@@ -261,6 +277,7 @@ body {
 .modal-sheet {
   position:fixed; bottom:0; left:0; right:0; z-index:101;
   background:var(--bg2); border-radius:var(--r-lg) var(--r-lg) 0 0;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-top: var(--glass-border);
   transform:translateY(100%); transition:transform .35s cubic-bezier(.32,1,.64,1);
   max-height:92dvh; display:flex; flex-direction:column;
   padding-bottom: var(--safe-bot);
