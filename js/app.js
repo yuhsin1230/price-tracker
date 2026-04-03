@@ -161,7 +161,31 @@ function renderHome() {
       <div class="product-list">${wait.map(card).join('')}</div>
     </section>`:''}
   `;
-  $('search-home')?.addEventListener('input', e => { S.search.home = e.target.value; renderHome(); });
+  const srchEl = $('search-home');
+  if (srchEl) {
+    let composing = false;
+    srchEl.addEventListener('compositionstart', () => { composing = true; });
+    srchEl.addEventListener('compositionend',   e => {
+      composing = false;
+      S.search.home = e.target.value;
+      const pos = e.target.selectionStart;
+      renderHome();
+      const next = $('search-home');
+      if (next) { next.focus(); next.setSelectionRange(pos, pos); }
+    });
+    srchEl.addEventListener('input', e => {
+      if (composing) return; // 組字中，不觸發重渲染
+      S.search.home = e.target.value;
+      const pos = e.target.selectionStart;
+      renderHome();
+      const next = $('search-home');
+      if (next) { next.focus(); next.setSelectionRange(pos, pos); }
+    });
+    if (document.activeElement?.id === 'search-home' || S._searchFocus === 'home') {
+      srchEl.focus();
+      S._searchFocus = null;
+    }
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -217,7 +241,31 @@ function renderProducts() {
     </div>
     ${active.length ? listHTML : `<div class="empty-state"><div class="empty-icon">📦</div><h2>${S.search.products?'查無結果':'尚無商品'}</h2><p>${S.search.products?'試試其他關鍵字':'點右上角 + 新增第一個商品'}</p></div>`}
   `;
-  $('search-products')?.addEventListener('input', e => { S.search.products = e.target.value; renderProducts(); });
+  const srchEl2 = $('search-products');
+  if (srchEl2) {
+    let composing2 = false;
+    srchEl2.addEventListener('compositionstart', () => { composing2 = true; });
+    srchEl2.addEventListener('compositionend',   e => {
+      composing2 = false;
+      S.search.products = e.target.value;
+      const pos = e.target.selectionStart;
+      renderProducts();
+      const next = $('search-products');
+      if (next) { next.focus(); next.setSelectionRange(pos, pos); }
+    });
+    srchEl2.addEventListener('input', e => {
+      if (composing2) return; // 組字中，不觸發重渲染
+      S.search.products = e.target.value;
+      const pos = e.target.selectionStart;
+      renderProducts();
+      const next = $('search-products');
+      if (next) { next.focus(); next.setSelectionRange(pos, pos); }
+    });
+    if (document.activeElement?.id === 'search-products' || S._searchFocus === 'products') {
+      srchEl2.focus();
+      S._searchFocus = null;
+    }
+  }
 }
 
 // ═══════════════════════════════════════════
