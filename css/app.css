@@ -338,3 +338,37 @@ body {
   background:linear-gradient(135deg, #34C759 0%, #30B0C7 100%);
   color:#fff;
 }
+
+/* ── Trend Chart ── */
+.trend-chart-card { padding:18px 18px 12px; }
+.trend-chart-wrap {
+  position:relative;
+  width:100%;
+  /* 手機上限制高度，避免過高 */
+  max-height:240px;
+}
+.trend-chart-wrap canvas {
+  width:100% !important;
+  max-height:240px !important;
+}
+
+/* ── Step Indicators ── */
+.step-number {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-right: 14px;
+}
+.step-1 { background: rgba(0, 122, 255, 0.15); color: var(--accent); }
+.step-2 { background: rgba(255, 149, 0, 0.15); color: var(--orange); }
+.step-3 { background: rgba(52, 199, 89, 0.15); color: var(--green); }
+.step-4 { background: rgba(175, 82, 222, 0.15); color: #AF52DE; }
+.step-5 { background: rgba(255, 59, 48, 0.15); color: var(--red); }
+.step-6 { background: rgba(142, 142, 147, 0.15); color: var(--txt2); }
+

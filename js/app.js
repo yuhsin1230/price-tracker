@@ -272,6 +272,15 @@ function renderDetail(id) {
   }
   analysisHTML += `</div>`;
 
+  // Price trend chart (需 >= 2 筆才顯示)
+  let trendChartHTML = '';
+  if (recs.length >= 2) {
+    trendChartHTML = `<div class="analysis-card trend-chart-card">
+      <div class="analysis-card-title">價格趨勢</div>
+      <div class="trend-chart-wrap"><canvas id="trend-chart"></canvas></div>
+    </div>`;
+  }
+
   // Cross-store compare
   let storeCompareHTML = '';
   if (a && recs.length > 0) {
@@ -342,12 +351,172 @@ function renderDetail(id) {
   </div>` : '';
 
   $('content').innerHTML = `<div class="detail-wrap fade-in">
-    ${analysisHTML}${storeCompareHTML}${sizeCompareHTML}${recListHTML}
+    ${analysisHTML}${trendChartHTML}${storeCompareHTML}${sizeCompareHTML}${recListHTML}
     <div style="margin-top:20px;text-align:center">
       <button class="btn-ghost btn-danger" style="padding:10px 20px" data-action="archive-product" data-id="${id}">刪除此商品</button>
     </div>
     <div style="height:20px"></div>
   </div>`;
+
+  // 初始化趨勢圖
+  if (recs.length >= 2) {
+    renderTrendChart(recs, p, a);
+  }
+}
+
+// ═══════════════════════════════════════════
+// TREND CHART
+// ═══════════════════════════════════════════
+function renderTrendChart(recs, p, analysis) {
+  const canvas = document.getElementById('trend-chart');
+  if (!canvas) return;
+
+  // Chart.js 未載入（離線模式）時優雅退化
+  if (typeof Chart === 'undefined') {
+    canvas.parentElement.innerHTML =
+      '<div style="padding:20px;text-align:center;color:var(--txt3);font-size:.82rem">📶 連線後可查看趨勢圖</div>';
+    return;
+  }
+
+  // 依日期升序排列
+  const sorted = [...recs].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const labels    = sorted.map(r => fmtDate(r.date));
+  const unitPrices = sorted.map(r => parseFloat(r.unitPrice.toFixed(4)));
+  const avgPrice  = analysis ? parseFloat(analysis.avgUnitPrice.toFixed(4)) : null;
+  const minPrice  = analysis ? parseFloat(analysis.minUnitPrice.toFixed(4)) : null;
+
+  // 點的樣式：促銷=橘色、最低價=綠色、其他=藍色
+  const pointColors = sorted.map(r => {
+    if (Math.abs(r.unitPrice - analysis?.minUnitPrice) < 0.0001) return '#34C759';
+    if (r.isPromotion) return '#FF9500';
+    return '#007AFF';
+  });
+  const pointRadius = sorted.map(r =>
+    Math.abs(r.unitPrice - analysis?.minUnitPrice) < 0.0001 ? 7 : 4
+  );
+
+  // 取得 CSS 變數顏色
+  const style = getComputedStyle(document.documentElement);
+  const txtColor  = style.getPropertyValue('--txt2').trim() || '#3C3C43';
+  const sepColor  = style.getPropertyValue('--sep').trim() || 'rgba(60,60,67,.12)';
+  const accentColor = '#007AFF';
+
+  // 銷毀舊圖（切換商品時）
+  if (canvas._chartInstance) { canvas._chartInstance.destroy(); }
+
+  const datasets = [
+    {
+      label: `單位價格 (/${p.unitType})`,
+      data: unitPrices,
+      borderColor: accentColor,
+      backgroundColor: 'rgba(0,122,255,0.08)',
+      borderWidth: 2,
+      fill: true,
+      tension: 0.35,
+      pointBackgroundColor: pointColors,
+      pointBorderColor: '#fff',
+      pointBorderWidth: 1.5,
+      pointRadius: pointRadius,
+      pointHoverRadius: 8,
+    }
+  ];
+
+  // 平均線
+  if (avgPrice !== null) {
+    datasets.push({
+      label: '歷史平均',
+      data: Array(sorted.length).fill(avgPrice),
+      borderColor: 'rgba(142,142,147,0.6)',
+      borderWidth: 1.5,
+      borderDash: [6, 4],
+      pointRadius: 0,
+      fill: false,
+      tension: 0,
+    });
+  }
+
+  // 最低價線
+  if (minPrice !== null) {
+    datasets.push({
+      label: '歷史最低',
+      data: Array(sorted.length).fill(minPrice),
+      borderColor: 'rgba(52,199,89,0.5)',
+      borderWidth: 1.5,
+      borderDash: [3, 4],
+      pointRadius: 0,
+      fill: false,
+      tension: 0,
+    });
+  }
+
+  canvas._chartInstance = new Chart(canvas, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            color: txtColor,
+            font: { size: 11 },
+            boxWidth: 24,
+            padding: 12,
+            usePointStyle: true,
+            pointStyle: 'line',
+            filter: item => item.datasetIndex !== 0, // 主線在顏色點已表達，不重複
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(28,28,30,0.88)',
+          titleColor: '#fff',
+          bodyColor: 'rgba(255,255,255,0.8)',
+          cornerRadius: 10,
+          padding: 10,
+          callbacks: {
+            title: ctx => labels[ctx[0].dataIndex],
+            label: ctx => {
+              if (ctx.datasetIndex === 0) {
+                const r = sorted[ctx.dataIndex];
+                const store = S.cache.storesMap[r.storeId];
+                const promo = r.isPromotion ? ' 🏷促銷' : '';
+                const storeName = store ? ` · ${store.name}` : '';
+                return `$${ctx.parsed.y.toFixed(4)} /${p.unitType}${storeName}${promo}`;
+              }
+              return `${ctx.dataset.label}: $${ctx.parsed.y.toFixed(4)} /${p.unitType}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: sepColor },
+          ticks: {
+            color: txtColor,
+            font: { size: 10 },
+            maxRotation: 45,
+            minRotation: 0,
+            maxTicksLimit: 8,
+          }
+        },
+        y: {
+          grid: { color: sepColor },
+          ticks: {
+            color: txtColor,
+            font: { size: 10 },
+            callback: v => `$${v}`
+          },
+          title: {
+            display: false,
+          }
+        }
+      }
+    }
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -494,7 +663,7 @@ function renderHelp() {
 
       <div class="analysis-card" style="margin-bottom: 16px;">
         <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <div style="background: var(--blue); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">1</div>
+          <div class="step-number step-1">1</div>
           <h3 style="margin: 0; font-size: 1.05rem;">新增你要追蹤的商品</h3>
         </div>
         <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
@@ -504,7 +673,7 @@ function renderHelp() {
 
       <div class="analysis-card" style="margin-bottom: 16px;">
         <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <div style="background: var(--orange); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">2</div>
+          <div class="step-number step-2">2</div>
           <h3 style="margin: 0; font-size: 1.05rem;">建立你的常去賣場</h3>
         </div>
         <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
@@ -514,7 +683,7 @@ function renderHelp() {
 
       <div class="analysis-card" style="margin-bottom: 16px;">
         <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <div style="background: var(--green); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">3</div>
+          <div class="step-number step-3">3</div>
           <h3 style="margin: 0; font-size: 1.05rem;">隨時記錄最新價格</h3>
         </div>
         <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
@@ -522,13 +691,33 @@ function renderHelp() {
         </p>
       </div>
 
-      <div class="analysis-card" style="margin-bottom: 24px;">
+      <div class="analysis-card" style="margin-bottom: 16px;">
         <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <div style="background: var(--purple); color: white; width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; margin-right: 12px;">4</div>
+          <div class="step-number step-4">4</div>
           <h3 style="margin: 0; font-size: 1.05rem;">自動分析與購買建議</h3>
         </div>
         <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
           回到首頁，系統會根據你的歷史紀錄，用顏色和百分比告訴你現在的價格是<strong>「歷史低價（值得買）」</strong>還是<strong>「歷史高價（再等等）」</strong>。
+        </p>
+      </div>
+
+      <div class="analysis-card" style="margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div class="step-number step-5">5</div>
+          <h3 style="margin: 0; font-size: 1.05rem;">查看價格趨勢</h3>
+        </div>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
+          當單一商品累積兩筆以上的紀錄時，商品介面會自動繪製<strong>「價格趨勢折線圖」</strong>，輕鬆掌握價格波動走向。
+        </p>
+      </div>
+
+      <div class="analysis-card" style="margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <div class="step-number step-6">6</div>
+          <h3 style="margin: 0; font-size: 1.05rem;">定期資料備份</h3>
+        </div>
+        <p style="color: var(--txt2); font-size: 0.85rem; line-height: 1.4; margin-left: 36px; margin-bottom: 0;">
+          切換到「設定」頁籤，您可以將目前所有紀錄<strong>「匯出 JSON」</strong>。未來若換機器或不小心清理瀏覽器資料，隨時可透過<strong>「匯入 JSON」</strong>無縫還原歷史資料。
         </p>
       </div>
 
