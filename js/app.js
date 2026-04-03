@@ -667,10 +667,10 @@ function renderSettings() {
       <div class="settings-section-title">外觀</div>
       <div class="list-group">
         <div class="list-item" style="cursor:pointer" data-action="toggle-theme">
-          <div class="list-item-icon" style="background:var(--bg3);color:var(--txt)">\${document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️'}</div>
+          <div class="list-item-icon" style="background:var(--bg3);color:var(--txt)">${document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙' : '☀️'}</div>
           <div class="list-item-body">
             <div class="list-item-title">切換深色/淺色模式</div>
-            <div class="list-item-sub">目前：\${document.documentElement.getAttribute('data-theme') === 'dark' ? '深色' : '淺色'}</div>
+            <div class="list-item-sub">目前：${document.documentElement.getAttribute('data-theme') === 'dark' ? '深色' : '淺色'}</div>
           </div>
         </div>
       </div>
@@ -1127,7 +1127,7 @@ async function forceUpdate() {
     for (const name of names) await caches.delete(name);
   } catch(e) {}
   toast('正在重新載入最新版本...');
-  setTimeout(() => window.location.reload(true), 1200);
+  setTimeout(() => window.location.href = window.location.pathname + '?_t=' + Date.now(), 1200);
 }
 
 function toggleTheme() {
