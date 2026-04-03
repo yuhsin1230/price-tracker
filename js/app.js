@@ -15,8 +15,8 @@ const S = {
 const uid = () => crypto.randomUUID();
 const todayStr = () => new Date().toISOString().split('T')[0];
 const esc = s => { const d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; };
-const fmtPrice = p => { const n = Number(p); return `$${Number.isInteger(n) ? n : n.toFixed(2)}`; };
-const fmtUnit  = (p, t) => `$${Number(p).toFixed(4)} / ${t||''}`;
+const fmtPrice = p => `$${parseFloat(Number(p).toFixed(2))}`;
+const fmtUnit  = (p, t) => `$${parseFloat(Number(p).toFixed(4))} / ${t||''}`;
 const fmtDate  = s => { const d = new Date(s + 'T00:00:00'); return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`; };
 const $ = id => document.getElementById(id);
 
@@ -122,17 +122,17 @@ function renderHome() {
 
   const card = ({p, a}) => {
     const rec = a ? a.recommendation : Analysis.getRecommendation(null);
-    const store = a ? S.cache.storesMap[a.latestRecord?.storeId] : null;
+    const store = a ? S.cache.storesMap[a.minRecord?.storeId] : null;
     const pct = a ? a.percentile : 50;
     return `<div class="product-card fade-in" data-action="go-product" data-id="${p.id}">
       <div class="product-card-main">
         <div class="product-card-info">
           <div class="product-name">${esc(p.name)}${p.brand?`<span class="product-brand"> · ${esc(p.brand)}</span>`:''}</div>
           ${a ? `<div class="product-unit-price">
-            <span class="unit-price-value">${fmtPrice(a.latestRecord.price)}</span>
-            <span class="unit-price-store">(${fmtUnit(a.latestUnitPrice, p.unitType)})${store?' · '+esc(store.name):''}</span>
+            <span class="unit-price-value" style="color:var(--green)">最低 ${fmtPrice(a.minRecord.price)}</span>
+            <span class="unit-price-store">(${fmtUnit(a.minUnitPrice, p.unitType)})${store?' · '+esc(store.name):''}</span>
           </div>
-          <span class="rec-badge" style="--rec-color:${rec.color};--rec-bg:${rec.bg}">${rec.emoji} ${rec.label}</span>`
+          <span class="rec-badge" style="--rec-color:${rec.color};--rec-bg:${rec.bg}">${rec.emoji} 最新紀錄: ${rec.label}</span>`
           : `<div class="no-data-label">尚無紀錄</div>`}
         </div>
         ${a ? `<div class="product-card-percentile">
@@ -533,9 +533,9 @@ function renderTrendChart(recs, p, analysis) {
                 const store = S.cache.storesMap[r.storeId];
                 const promo = r.isPromotion ? ' 🏷促銷' : '';
                 const storeName = store ? ` · ${store.name}` : '';
-                return `$${ctx.parsed.y.toFixed(4)} /${p.unitType}${storeName}${promo}`;
+                return `$${parseFloat(ctx.parsed.y.toFixed(4))} /${p.unitType}${storeName}${promo}`;
               }
-              return `${ctx.dataset.label}: $${ctx.parsed.y.toFixed(4)} /${p.unitType}`;
+              return `${ctx.dataset.label}: $${parseFloat(ctx.parsed.y.toFixed(4))} /${p.unitType}`;
             }
           }
         }
