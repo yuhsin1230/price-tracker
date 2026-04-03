@@ -584,7 +584,7 @@ function renderStores() {
   const active = S.cache.stores.filter(s => !s.isArchived);
 
   $('content').innerHTML = `
-    <div class="list-section">
+    <div class="list-section" style="padding-top: 16px;">
       <div class="list-group">${active.length ? active.map(s => {
         const cnt = S.cache.priceRecords.filter(r => r.storeId === s.id).length;
         return `<div class="list-item">
@@ -686,7 +686,7 @@ function renderSettings() {
           </div>
         </div>
         <div class="list-item" style="cursor:default">
-          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">2.0.2</div></div>
+          <div class="list-item-body"><div class="list-item-title">版本</div><div class="list-item-sub">2.0.3</div></div>
         </div>
         <div class="list-item" style="cursor:default">
           <div class="list-item-body"><div class="list-item-title">儲存方式</div><div class="list-item-sub">本地 IndexedDB（完全離線）</div></div>
